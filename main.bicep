@@ -1,5 +1,5 @@
 param location string = 'eastus'
-param storageAccountName string = 'cloudtopialogs'
+param storageAccountName string = 'cloudtopiablob2025'
 param containerName string = 'weatherdata'
 
 resource storage 'Microsoft.Storage/storageAccounts@2022-09-01' = {
