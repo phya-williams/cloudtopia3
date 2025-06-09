@@ -15,7 +15,6 @@ resource storage 'Microsoft.Storage/storageAccounts@2022-09-01' = {
 }
 
 resource container 'Microsoft.Storage/storageAccounts/blobServices/containers@2022-09-01' = {
-  parent: storage::blobServices::default
   name: containerName
   properties: {
     publicAccess: 'None'
