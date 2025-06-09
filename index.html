@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>CloudTopia Weather Log Dashboard</title>
+  <style>
+    body { font-family: sans-serif; text-align: center; padding: 20px; }
+    h1 { font-size: 1.8em; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { border: 1px solid #ccc; padding: 8px; }
+    th { background-color: #eef; }
+  </style>
+</head>
+<body>
+  <h1>🌦️ CloudTopia Weather Logs</h1>
+  <table id="logTable">
+    <thead>
+      <tr>
+        <th>Timestamp</th>
+        <th>Weather</th>
+        <th>Temperature</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    const accountName = "cloudtopiablob2025";
+    const containerName = "weatherdata";
+
+    async function fetchLogs() {
+      const response = await fetch(`https://$cloudtopiablob2025.blob.core.windows.net/$weatherdata?restype=container&comp=list`);
+      const text = await response.text();
+      const xml = new DOMParser().parseFromString(text, "application/xml");
+      const blobs = [...xml.getElementsByTagName("Blob")].reverse();
+
+      const tableBody = document.querySelector("#logTable tbody");
+      tableBody.innerHTML = "";
+
+      for (let blob of blobs.slice(0, 10)) {
+        const name = blob.getElementsByTagName("Name")[0].textContent;
+        const blobRes = await fetch(`https://$cloudtopiablob2025.blob.core.windows.net/$weatherdata/${name}`);
+        const log = await blobRes.json();
+        const row = `<tr><td>${log.timestamp}</td><td>${log.weather}</td><td>${log.temperature}°F</td></tr>`;
+        tableBody.insertAdjacentHTML("beforeend", row);
+      }
+    }
+
+    fetchLogs();
+    setInterval(fetchLogs, 4000);
+  </script>
+</body>
+</html>
